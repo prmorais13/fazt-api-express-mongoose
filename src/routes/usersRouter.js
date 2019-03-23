@@ -6,7 +6,9 @@ const {
   getUserId,
   replaceUser,
   updateUser,
-  delUser
+  delUser,
+  getUserCars,
+  newUserCars
 } = require('../controllers/userController');
 
 router
@@ -20,5 +22,10 @@ router
   .put(replaceUser)
   .patch(updateUser)
   .delete(delUser);
+
+router
+  .route('/:id/cars')
+  .get(getUserCars)
+  .post(newUserCars);
 
 module.exports = router;

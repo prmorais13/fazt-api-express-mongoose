@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Car = require('../models/carModel');
 
 module.exports = {
   getUsers: async (req, res) => {
@@ -12,7 +13,7 @@ module.exports = {
 
   getUserId: async (req, res, next) => {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate('cars');
 
     if (user) {
       res.status(200).json(user);
@@ -54,5 +55,27 @@ module.exports = {
         .json({ msg: `Usuario com ID ${id} removido com sucesso.` });
     }
     res.status(404).json({ msg: `Usuario com ID ${id} não encontrado.` });
+  },
+
+  getUserCars: async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findById(id).populate('cars');
+
+    if (user) {
+      res.status(200).json(user);
+    }
+    res.status(404).json({ msg: `Usuario com ID ${id} não encontrado.` });
+  },
+
+  newUserCars: async (req, res) => {
+    const { id } = req.params;
+    const newCar = new Car(req.body);
+    const user = await User.findById(id);
+
+    newCar.seller = user;
+    await newCar.save();
+    user.cars.push(newCar);
+    await user.save();
+    res.status(201).json(newCar);
   }
 };
